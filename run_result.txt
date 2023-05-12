@@ -1,0 +1,183 @@
+K-folder= 1 	total= 5
+2.2991597762751628 0.0553805041377009 1.9976310835066942
+1.3313018503516325 1.9210899363955378 0.2912671178308151
+0.4198961859356128 2.1977887867212114 1.2012282197850082
+标签对应计算完成：0-> 2 	1-> 0 	2-> 1
+              precision    recall  f1-score   support
+
+           0       1.00      0.98      0.99      1980
+           1       0.63      0.70      0.66      2020
+           2       0.67      0.61      0.64      2030
+
+    accuracy                           0.76      6030
+   macro avg       0.77      0.76      0.76      6030
+weighted avg       0.77      0.76      0.76      6030
+
+混淆矩阵为：
+[[1942   38    0]
+ [   4 1417  599]
+ [   0  791 1239]]
+绘制聚类可视化效果图，请稍后
+绘制完成，正在计算K-Means评估指标
+评估指标：
+inertia= 16507.20789006701 	silhoutte_score= 0.4494908311239417
+K-folder= 2 	total= 5
+0.06179249012776471 2.3195402815501893 2.0002865077989376
+1.9104351104248107 1.3372048804860979 0.2914985854224044
+2.177285086563659 0.4396131548665411 1.182749349487425
+标签对应计算完成：0-> 0 	1-> 2 	2-> 1
+              precision    recall  f1-score   support
+
+           0       0.98      0.98      0.98      2024
+           1       0.65      0.72      0.68      2008
+           2       0.71      0.63      0.66      1998
+
+    accuracy                           0.78      6030
+   macro avg       0.78      0.78      0.77      6030
+weighted avg       0.78      0.78      0.78      6030
+
+混淆矩阵为：
+[[1986   38    0]
+ [  44 1442  522]
+ [   0  746 1252]]
+绘制聚类可视化效果图，请稍后
+绘制完成，正在计算K-Means评估指标
+评估指标：
+inertia= 16509.495013330066 	silhoutte_score= 0.44866773426791445
+K-folder= 3 	total= 5
+1.995867121656577 0.059991604362456166 2.314847740715856
+0.2961839135208361 1.8997280028776244 1.3267693190274206
+1.1866680209684934 2.1702731097593615 0.42936827918099063
+标签对应计算完成：0-> 1 	1-> 0 	2-> 2
+              precision    recall  f1-score   support
+
+           0       0.99      0.98      0.98      2070
+           1       0.63      0.73      0.68      1955
+           2       0.71      0.61      0.66      2005
+
+    accuracy                           0.77      6030
+   macro avg       0.78      0.77      0.77      6030
+weighted avg       0.78      0.77      0.77      6030
+
+混淆矩阵为：
+[[2020   50    0]
+ [  26 1434  495]
+ [   0  787 1218]]
+绘制聚类可视化效果图，请稍后
+绘制完成，正在计算K-Means评估指标
+评估指标：
+inertia= 16393.035426250084 	silhoutte_score= 0.44837469181839645
+K-folder= 4 	total= 5
+2.005755611894437 2.3257300181873117 0.06157299400048237
+0.2979112073631617 1.333940246856381 1.913216928806287
+1.197142246210208 0.42816700383978296 2.1793845778197696
+标签对应计算完成：0-> 1 	1-> 2 	2-> 0
+              precision    recall  f1-score   support
+
+           0       0.98      0.98      0.98      2001
+           1       0.64      0.74      0.69      2025
+           2       0.71      0.61      0.66      2004
+
+    accuracy                           0.78      6030
+   macro avg       0.78      0.78      0.78      6030
+weighted avg       0.78      0.78      0.78      6030
+
+混淆矩阵为：
+[[1958   43    0]
+ [  32 1506  487]
+ [   0  789 1215]]
+绘制聚类可视化效果图，请稍后
+绘制完成，正在计算K-Means评估指标
+评估指标：
+inertia= 16605.001999516502 	silhoutte_score= 0.4489309617223927
+K-folder= 5 	total= 5
+2.2557596599035823 0.05686535914299062 2.0176516503804023
+1.2624124952972868 1.9237402386439177 0.35197820017747805
+0.3586145855984853 2.200162867014958 1.2580495781369605
+标签对应计算完成：0-> 2 	1-> 0 	2-> 1
+              precision    recall  f1-score   support
+
+           0       1.00      0.98      0.99      1975
+           1       0.68      0.68      0.68      2042
+           2       0.68      0.69      0.68      2013
+
+    accuracy                           0.78      6030
+   macro avg       0.78      0.78      0.78      6030
+weighted avg       0.78      0.78      0.78      6030
+
+混淆矩阵为：
+[[1943   32    0]
+ [   0 1388  654]
+ [   0  634 1379]]
+绘制聚类可视化效果图，请稍后
+绘制完成，正在计算K-Means评估指标
+评估指标：
+inertia= 16515.524592205893 	silhoutte_score= 0.44524317634152216
+Help on process in module __main__ object:
+
+class process(builtins.object)
+ |  process(k_folder=1, k_folder_test=False, enhancement_level=0, data_enhancement=False, size_train=0.6, size_val=0.2, size_test=0.2, random_set=True, random_seed=1, draw_fusion_matrix=False, save_P_R=False, runtime_broker=False, save_model=True, model_name='model.pkl', kernel='linear', get_help=False, experiment_ver=2, n_clusters=3)
+ |  
+ |  Methods defined here:
+ |  
+ |  __copyright__(self)
+ |      this python project is edited by LRY, all rights reserved (c) 2020~2023
+ |  
+ |  __init__(self, k_folder=1, k_folder_test=False, enhancement_level=0, data_enhancement=False, size_train=0.6, size_val=0.2, size_test=0.2, random_set=True, random_seed=1, draw_fusion_matrix=False, save_P_R=False, runtime_broker=False, save_model=True, model_name='model.pkl', kernel='linear', get_help=False, experiment_ver=2, n_clusters=3)
+ |      process.__init__() function:
+ |          usage:
+ |              k_folder :
+ |                  if k_folder_test == False ,this option is unavailable,else use cross validation(k-folder),default = 1
+ |              k_folder_test :
+ |                  if this option == True , we will use cross validation(k_folder),else,we will use common training way,default = False
+ |              enhancement_level :
+ |                  if data_enhancement == False ,this option is unavailable, else we will add noise on each data,default = 0
+ |              data_enhancement :
+ |                  if this option == False, we will never add noice on data,however this option may cause accuracy reducing,else we will add some noise to the data
+ |              size_train :
+ |                  if k_folder_test == True, this option is unavailable,else we will split dataset -> train_data(length = int(len(dataset)*size_train)),default = 0.6
+ |              size_val :
+ |                  if k_folder_test == True, this option is unavailable, else we will split dataset -> val_data(length = int(len(dataset)*size_val)),default = 0.2
+ |              size_test :
+ |                  if k_folder_test == True, this option is unavailable, else we will split dataset -> test_data(length = int(len(dataset)*size_test)),default = 0.2
+ |              random_set :
+ |                  if random_set == True, we will disrupt dataset according to the random_seed, else we will never shuffle the dataset, default = True
+ |              random_seed :
+ |                  if random_set == False, this option is unavailable, else we will disrupt dataset according to the random_seed, default = 1
+ |              draw_fusion_matrix :
+ |                  if draw_fusion_matrix == True, we will draw confusion matrix,else we will never draw confusion matrix, default = False
+ |              save_P_R :
+ |                  if save_P_R == True, we will save P-R curve by matplotlib.pyplot ,else we will never save P_R curve to your computer,default = False
+ |              runtime_broker :
+ |                  if runtime_broker == True, we will stop when the photograph is OK,else we will save the photograph directly,default = False
+ |              save_model :
+ |                  if save_model == True, we will dump model to your computer (current path) by joblib,else we will not dump model,default = True
+ |              model_name :
+ |                  if save_model == False, this option is unavailable,else we will use this name to save model, default = 'model.pkl'
+ |              kernel :
+ |                  SupportVectorMachine Kernel function -> default = 'linear'
+ |              help :
+ |                  get_help,default = False
+ |              experiment_ver :
+ |                  experiment version you can choose 2 or 3 to train with different type of model (exp_2 : SupportVectorMechine,exp_3 : K-NearestNeighbor)
+ |              n_neighbor :
+ |                  define n_neighbor(from sklearn.neighbor.KNeighborsClassifier(n_neighbor)) only experiment_ver == 3,this choice is available
+ |  
+ |  help(self)
+ |      help function in Process class
+ |      usage:
+ |          1. help(process())
+ |          2. process(get_help = True)
+ |  
+ |  ----------------------------------------------------------------------
+ |  Data descriptors defined here:
+ |  
+ |  __dict__
+ |      dictionary for instance variables (if defined)
+ |  
+ |  __weakref__
+ |      list of weak references to the object (if defined)
+
+
+进程已结束,退出代码0
+(实验3，五折交叉验证)
