@@ -404,3 +404,83 @@ class process(builtins.object)
 
 进程已结束,退出代码0
 （实验2，五折交叉验证模式）
+              precision    recall  f1-score   support
+
+           0       0.93      0.94      0.94      2015
+           1       0.94      0.93      0.94      2005
+
+    accuracy                           0.94      4020
+   macro avg       0.94      0.94      0.94      4020
+weighted avg       0.94      0.94      0.94      4020
+
+混淆矩阵为：
+[[1901  114]
+ [ 142 1863]]
+Help on process in module __main__ object:
+
+class process(builtins.object)
+ |  process(k_folder=1, k_folder_test=False, enhancement_level=0, data_enhancement=False, size_train=0.6, size_val=0.2, size_test=0.2, random_set=True, random_seed=1, draw_fusion_matrix=False, save_P_R=False, runtime_broker=False, save_model=True, model_name='model.pkl', kernel='linear', get_help=False, experiment_ver=2, n_clusters=3)
+ |  
+ |  Methods defined here:
+ |  
+ |  __copyright__(self)
+ |      this python project is edited by LRY, all rights reserved (c) 2020~2023
+ |  
+ |  __init__(self, k_folder=1, k_folder_test=False, enhancement_level=0, data_enhancement=False, size_train=0.6, size_val=0.2, size_test=0.2, random_set=True, random_seed=1, draw_fusion_matrix=False, save_P_R=False, runtime_broker=False, save_model=True, model_name='model.pkl', kernel='linear', get_help=False, experiment_ver=2, n_clusters=3)
+ |      process.__init__() function:
+ |          usage:
+ |              k_folder :
+ |                  if k_folder_test == False ,this option is unavailable,else use cross validation(k-folder),default = 1
+ |              k_folder_test :
+ |                  if this option == True , we will use cross validation(k_folder),else,we will use common training way,default = False
+ |              enhancement_level :
+ |                  if data_enhancement == False ,this option is unavailable, else we will add noise on each data,default = 0
+ |              data_enhancement :
+ |                  if this option == False, we will never add noice on data,however this option may cause accuracy reducing,else we will add some noise to the data
+ |              size_train :
+ |                  if k_folder_test == True, this option is unavailable,else we will split dataset -> train_data(length = int(len(dataset)*size_train)),default = 0.6
+ |              size_val :
+ |                  if k_folder_test == True, this option is unavailable, else we will split dataset -> val_data(length = int(len(dataset)*size_val)),default = 0.2
+ |              size_test :
+ |                  if k_folder_test == True, this option is unavailable, else we will split dataset -> test_data(length = int(len(dataset)*size_test)),default = 0.2
+ |              random_set :
+ |                  if random_set == True, we will disrupt dataset according to the random_seed, else we will never shuffle the dataset, default = True
+ |              random_seed :
+ |                  if random_set == False, this option is unavailable, else we will disrupt dataset according to the random_seed, default = 1
+ |              draw_fusion_matrix :
+ |                  if draw_fusion_matrix == True, we will draw confusion matrix,else we will never draw confusion matrix, default = False
+ |              save_P_R :
+ |                  if save_P_R == True, we will save P-R curve by matplotlib.pyplot ,else we will never save P_R curve to your computer,default = False
+ |              runtime_broker :
+ |                  if runtime_broker == True, we will stop when the photograph is OK,else we will save the photograph directly,default = False
+ |              save_model :
+ |                  if save_model == True, we will dump model to your computer (current path) by joblib,else we will not dump model,default = True
+ |              model_name :
+ |                  if save_model == False, this option is unavailable,else we will use this name to save model, default = 'model.pkl'
+ |              kernel :
+ |                  SupportVectorMachine Kernel function -> default = 'linear'
+ |              help :
+ |                  get_help,default = False
+ |              experiment_ver :
+ |                  experiment version you can choose 2 or 3 to train with different type of model (exp_2 : SupportVectorMechine,exp_3 : K-NearestNeighbor)
+ |              n_neighbor :
+ |                  define n_neighbor(from sklearn.neighbor.KNeighborsClassifier(n_neighbor)) only experiment_ver == 3,this choice is available
+ |  
+ |  help(self)
+ |      help function in Process class
+ |      usage:
+ |          1. help(process())
+ |          2. process(get_help = True)
+ |  
+ |  ----------------------------------------------------------------------
+ |  Data descriptors defined here:
+ |  
+ |  __dict__
+ |      dictionary for instance variables (if defined)
+ |  
+ |  __weakref__
+ |      list of weak references to the object (if defined)
+
+
+进程已结束,退出代码0
+（实验2，正常训练模式）
