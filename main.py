@@ -11,7 +11,9 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import precision_recall_curve
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import KMeans
 from sklearn.svm import *
+from sklearn.metrics import silhouette_score,silhouette_samples
 def choose(exp_ver=2,k_folder_option=False):
     if exp_ver == 2:
         if k_folder_option:
@@ -20,9 +22,9 @@ def choose(exp_ver=2,k_folder_option=False):
             help(process(1, False, 200, True, 0.8, 0.0, 0.2, True, 1, True, True, False,True, 'model.pkl', 'linear', get_help=False))  # 普通训练，实验2
     elif exp_ver == 3:
         if k_folder_option:
-            help(process(5, True, 200, True, 0.8, 0.0, 0.2, True, 1, True, True, False, True, 'model.pkl', 'linear', get_help=False, experiment_ver=3, n_neighbors=1))  # 5折交叉验证，实验3
+            help(process(5, True, 200, True, 0.8, 0.0, 0.2, True, 1, True, True, False, True, 'model.pkl', 'linear', get_help=False, experiment_ver=3, n_clusters=3))  # 5折交叉验证，实验3
         else:
-            help(process(1, False, 200, True, 0.8, 0.0, 0.2, True, 1, True, True, False, True, 'model.pkl', 'linear', get_help=False, experiment_ver=3, n_neighbors=1))  # 普通训练，实验3
+            help(process(1, False, 200, True, 0.8, 0.0, 0.2, True, 1, True, True, False, True, 'model.pkl', 'linear', get_help=False, experiment_ver=3, n_clusters=3))  # 普通训练，实验3
     else:
         raise ValueError('can not found exp_ver=', exp_ver, 'k_folder_option=', k_folder_option)
 
@@ -34,7 +36,7 @@ class process():
     def __init__(self, k_folder=1, k_folder_test=False, enhancement_level=0, data_enhancement=False, size_train=0.6,
                  size_val=0.2, size_test=0.2, random_set=True, random_seed=1, draw_fusion_matrix=False, save_P_R=False,
                  runtime_broker=False, save_model=True, model_name='model.pkl', kernel='linear', get_help=False,
-                 experiment_ver=2, n_neighbors=1):
+                 experiment_ver=2, n_clusters=3):
         """
         process.__init__() function:
             usage:
@@ -100,7 +102,7 @@ class process():
             self.model_name = model_name
             self.kernel = kernel
             self.exp_version = experiment_ver
-            self.n_neighbors = n_neighbors
+            self.n_neighbors = n_clusters
             if sys.version_info >= (3, 10):
                 match experiment_ver:
                     case 2:
@@ -181,17 +183,17 @@ class process():
             joblib.dump(self.model, self.model_name)
 
     def _train(self, X, Y):
-        knn = None
+        kMeans = None
         svc = None
         if self.exp_version == 2:
             svc = SVC(kernel=self.kernel)
             svc.fit(X, Y)
             self.model = svc
         elif self.exp_version == 3:
-            knn = KNeighborsClassifier(n_neighbors=self.n_neighbors)
-            knn.fit(X, Y)
-            self.model = knn
-        return svc if svc is not None else knn
+            kMeans = KMeans(n_clusters=self.n_neighbors,init='k-means++',n_init=100)
+            kMeans.fit(X)
+            self.model = kMeans
+        return svc if svc is not None else kMeans
 
     def _model_predict(self, X):
         if self.model == None:
@@ -421,6 +423,125 @@ class process():
         self.train_x, self.train_y, self.val_x, self.val_y, self.test_x, self.test_y = self._split_dataset()
         return self._forward_none_k_folder_ver_3()
 
+    def _update_label_for_kmeans(self,train_x,train_y,test_x,test_y):
+        """
+        :param train_x:
+        :param train_y:
+        :return: y_pred
+        """
+        """
+        @ 数据更新方式 -> 更新标签
+        @ step 1 -> 计算预测中心
+        @ step 2 -> 计算训练中心
+        @ step 3 -> 计算距离，中心对应，标签转换
+        @ step 4 -> 更新标签
+        """
+        y_pred = []
+        pred_label_0 = -1           #与输出标签0对应的真实标签
+        pred_label_1 = -1           #与输出标签1对应的真实标签
+        pred_label_2 = -1           #与输出标签2对应的真实标签
+        # 计算预测中心
+        pred_y_train = self._model_predict(train_x)
+        pred_y_train_1 = self._model_predict(train_x)
+        for i in range(len(pred_y_train)):
+            if pred_y_train_1[i] != pred_y_train[i]:
+                raise ValueError('outputError')
+        pred_length_0 = 0
+        pred_length_1 = 0
+        pred_length_2 = 0
+        temp_0_x,temp_0_y,temp_1_x,temp_1_y,temp_2_x,temp_2_y = 0,0,0,0,0,0
+        for i in range(len(pred_y_train)):
+            if pred_y_train[i] == 0:
+                pred_length_0 += 1
+                temp_0_x += train_x[i][0]
+                temp_0_y += train_x[i][1]
+            elif pred_y_train[i] == 1:
+                pred_length_1 += 1
+                temp_1_x += train_x[i][0]
+                temp_1_y += train_x[i][1]
+            elif pred_y_train[i] == 2:
+                pred_length_2 += 1
+                temp_2_x += train_x[i][0]
+                temp_2_y += train_x[i][1]
+            else:
+                return
+        pred_0_x = temp_0_x/pred_length_0
+        pred_0_y = temp_0_y/pred_length_0
+        pred_1_x = temp_1_x/pred_length_1
+        pred_1_y = temp_1_y/pred_length_1
+        pred_2_x = temp_2_x/pred_length_2
+        pred_2_y = temp_2_y/pred_length_2
+        # 计算真实标签中心
+        length_0 = 0
+        length_1 = 0
+        length_2 = 0
+        temp_00_x,temp_00_y,temp_11_x,temp_11_y,temp_22_x,temp_22_y = 0,0,0,0,0,0
+        for i in range(len(train_x)):
+            if train_y[i] == 0:
+                length_0 += 1
+                temp_00_x += train_x[i][0]
+                temp_00_y += train_x[i][1]
+            elif train_y[i] == 1:
+                length_1 += 1
+                temp_11_x += train_x[i][0]
+                temp_11_y += train_x[i][1]
+            elif train_y[i] == 2:
+                length_2 += 1
+                temp_22_x += train_x[i][0]
+                temp_22_y += train_x[i][1]
+            else:
+                return
+        true_0_x = temp_00_x/length_0
+        true_0_y = temp_00_y/length_0
+        true_1_x = temp_11_x/length_1
+        true_1_y = temp_11_y/length_1
+        true_2_x = temp_22_x/length_2
+        true_2_y = temp_22_y/length_2
+        # 计算距离
+        label_0to0 = self._calc_distance(true_0_x,true_0_y,pred_0_x,pred_0_y)
+        label_1to0 = self._calc_distance(true_0_x,true_0_y,pred_1_x,pred_1_y)
+        label_2to0 = self._calc_distance(true_0_x,true_0_y,pred_2_x,pred_2_y)
+        label_0to1 = self._calc_distance(true_1_x,true_1_y,pred_0_x,pred_0_y)
+        label_1to1 = self._calc_distance(true_1_x,true_1_y,pred_1_x,pred_1_y)
+        label_2to1 = self._calc_distance(true_1_x,true_1_y,pred_2_x,pred_2_y)
+        label_0to2 = self._calc_distance(true_2_x,true_2_y,pred_0_x,pred_0_y)
+        label_1to2 = self._calc_distance(true_2_x,true_2_y,pred_1_x,pred_1_y)
+        label_2to2 = self._calc_distance(true_2_x,true_2_y,pred_2_x,pred_2_y)
+        print(label_0to0,label_1to0,label_2to0)
+        print(label_0to1,label_1to1,label_2to1)
+        print(label_0to2,label_1to2,label_2to2)
+        # 计算标签对应关系
+        # 计算预测标签0对应的真实标签
+        temp = np.array([label_0to0,label_0to1,label_0to2])
+        index = np.argmin(temp)
+        pred_label_0 = index
+        # 计算预测标签1对应的真实标签
+        temp = np.array([label_1to0,label_1to1,label_1to2])
+        index = np.argmin(temp)
+        pred_label_1 = index
+        temp = np.array([label_2to0,label_2to1,label_2to2])
+        index = np.argmin(temp)
+        pred_label_2 = index
+        print('标签对应计算完成：0->',pred_label_0,'\t1->',pred_label_1,'\t2->',pred_label_2)
+        assert pred_label_2 != pred_label_1
+        assert pred_label_2 != pred_label_0
+        assert pred_label_1 != pred_label_0
+        test_y = self._model_predict(test_x)
+        for i in range(len(test_y)):
+            if test_y[i] == 0:
+                y_pred.append(pred_label_0)
+            elif test_y[i] == 1:
+                y_pred.append(pred_label_1)
+            elif test_y[i] == 2:
+                y_pred.append(pred_label_2)
+            else:
+                raise ValueError('can not update label in this solution')
+        y_pred = np.array(y_pred)
+        return y_pred
+
+    def _calc_distance(self,x1,y1,x2,y2):
+        return ((x1-x2)**2+(y1-y2)**2)**0.5
+
     def _forward_none_k_folder_ver_3(self):
         train_x, train_y, val_x, val_y, test_x, test_y = self.train_x, self.train_y, self.val_x, self.val_y, self.test_x, self.test_y
         self.model = self._train(train_x, train_y)
@@ -430,12 +551,18 @@ class process():
         y_pred = self.y_pred
         y_pred = np.array(y_pred)
         target_name = ['0', '1', '2']
+        """
+        @ v4.0 算法更新，根据聚类结果以及样本点中心，重新分配标签
+        """
+        y_pred = self._update_label_for_kmeans(train_x,train_y,test_x,test_y)
         print(classification_report(test_y, y_pred, target_names=target_name))
         self._draw_P_R(test_y, y_pred)
         print('混淆矩阵为：')
         self._draw_plt_confusion_matrix(test_y, y_pred, num_classes=3, classes=['0', '1', '2'], add_acc=True)
         print('绘制聚类可视化效果图，请稍后')
         self._draw_test_info(test_x, test_y, y_pred, title='KNN model', add_acc=True)
+        print('绘制完成，正在计算K-Means评估指标')
+        self._judge_k_means(train_x,train_y)
 
     def _forward_with_k_folder_ver_3(self):
         assert type(self.k_folder) == int
@@ -452,6 +579,10 @@ class process():
             self.y_pred = self._model_predict(test_X)
             y_pred = np.array(self.y_pred)
             target_name = ['0', '1', '2']
+            """
+            @ v4.0 算法更新，根据聚类结果以及样本点中心，重新分配标签
+            """
+            y_pred = self._update_label_for_kmeans(train_X, train_Y, test_X, test_Y)
             print(classification_report(test_Y, y_pred, target_names=target_name))
             str_name = "P-R(curve)-folder(" + str(i + 1) + "with" + str(self.k_folder)
             self._draw_P_R(test_Y, y_pred, change_name=True, new_name=str_name)
@@ -462,6 +593,8 @@ class process():
             print('绘制聚类可视化效果图，请稍后')
             str_name = "KNN model " + str(i + 1) + "with" + str(self.k_folder)
             self._draw_test_info(test_X, test_Y, y_pred, title=str_name, add_acc=True)
+            print('绘制完成，正在计算K-Means评估指标')
+            self._judge_k_means(train_X,train_Y)
 
     def _draw_test_info(self, test_x, test_y, y_pred, title='Zzz', add_acc=False):
         if title == 'Zzz':
@@ -496,19 +629,33 @@ class process():
             plt.savefig(title + ".png")
         plt.close()
 
+    def _judge_k_means(self,X,Y):
+        """
+        模型评估指标
+        :return: None
+        """
+        km = KMeans(n_clusters=3).fit(X,Y)
+        sc = silhouette_score(X,km.labels_)
+        print('评估指标：\ninertia=',km.inertia_,'\tsilhoutte_score=',sc)
+
 def main_new():
-    choose(3,True)
+    choose(2,False)
 
 def main_old():
     t1 = time.time()
     # help(process(5, True, 200, True, 0.8, 0.0, 0.2, True, 1,True,True,False,True,'model.pkl','linear',get_help=False)) # 5折交叉验证,实验2
     # help(process(1, False, 200, True, 0.8, 0.0, 0.2, True, 1,True,True,False,True,'model.pkl','linear',get_help=False)) # 普通训练，实验2
     help(process(5, True, 200, True, 0.8, 0.0, 0.2, True, 1, True, True, False, True, 'model.pkl', 'linear',
-                 get_help=False, experiment_ver=3, n_neighbors=1))  # 5折交叉验证，实验3
-    # help(process(1, False, 200, True, 0.8, 0.0, 0.2, True, 1,True,True,False,True,'model.pkl','linear',get_help=False,experiment_ver=3,n_neighbors=1)) # 普通训练，实验3
+                 get_help=False, experiment_ver=3, n_clusters=1))  # 5折交叉验证，实验3
+    # help(process(1, False, 200, True, 0.8, 0.0, 0.2, True, 1,True,True,False,True,'model.pkl','linear',get_help=False,experiment_ver=3,n_clusters=1)) # 普通训练，实验3
     # a.help()
     t2 = time.time()
     print('time used:(sec)', t2 - t1)
 
 if __name__ == '__main__':
-    main_new()
+    debug = True
+    if debug:
+        import cProfile
+        cProfile.run('main_new()','debug_timer_rec')
+    else :
+        main_new()
